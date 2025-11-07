@@ -1,0 +1,22 @@
+# Core dependencies
+openai>=1.0.0
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-community>=0.0.20
+langchain-text-splitters>=0.0.1
+langchain-classic>=0.1.0
+
+# Document processing
+pypdf>=3.0.0
+
+# Vector store and embeddings
+faiss-cpu>=1.7.4
+sentence-transformers>=2.2.0
+
+# Configuration and utilities
+pyyaml>=6.0
+pydantic>=2.0.0
+
+# Optional dependencies
+python-dotenv  # For .env file support
+gradio>=4.0.0  # For web UI

@@ -1,0 +1,111 @@
+# Configuration for Document Summarizer and Self-Corrected RAG System
+
+# API Configuration
+api:
+  openai_api_key_env: "OPENAI_API_KEY"  # Environment variable name
+  request_timeout: 60
+  max_retries: 3
+  retry_delay: 1.0
+
+# Model Configuration
+models:
+  summarize:
+    name: "gpt-4o-mini"
+    temperature: 0
+    max_tokens: 4000
+  
+  guardrail:
+    name: "gpt-4o-mini"
+    temperature: 0
+    max_tokens: 500
+  
+  generate:
+    name: "gpt-4o"
+    temperature: 0
+    max_tokens: 2000
+  
+  evaluate:
+    name: "gpt-4o-mini"
+    temperature: 0
+    max_tokens: 500
+
+# Document Processing
+document_processing:
+  # For summarization
+  summary_chunk_size: 10000
+  summary_chunk_overlap: 200
+  
+  # For RAG
+  rag_chunk_size: 1000
+  rag_chunk_overlap: 100
+  
+  # Supported file types
+  supported_formats:
+    - "pdf"
+    - "txt"
+    - "md"
+
+# Vector Store Configuration
+vector_store:
+  embedding_model: "all-MiniLM-L6-v2"
+  index_type: "faiss"
+  similarity_metric: "cosine"
+  top_k: 5  # Number of documents to retrieve
+
+# RAG Pipeline Configuration
+rag:
+  # Self-correction settings
+  max_correction_attempts: 3
+  min_acceptable_score: 3
+  
+  # Guardrail settings
+  guardrail_enabled: true
+  parallel_guardrail_checks: true
+  
+  # Generation settings
+  use_streaming: false
+  include_sources: true
+  max_context_length: 8000
+  
+  # Evaluation settings
+  strict_evaluation: true
+
+# Caching Configuration
+cache:
+  enabled: true
+  cache_dir: ".cache"
+  query_cache_ttl: 3600  # seconds
+  embedding_cache_enabled: true
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  log_to_file: true
+  log_file: "logs/rag_system.log"
+  log_rotation: true
+  max_log_size: 10485760  # 10MB
+  backup_count: 5
+
+# Monitoring Configuration
+monitoring:
+  enabled: true
+  metrics_file: "logs/metrics.json"
+  track_token_usage: true
+  track_latency: true
+  track_scores: true
+
+# Security Configuration
+security:
+  input_validation: true
+  max_query_length: 1000
+  sanitize_input: true
+  rate_limit_enabled: false
+  rate_limit_per_minute: 60
+
+# Performance Configuration
+performance:
+  async_enabled: true
+  parallel_processing: true
+  max_concurrent_requests: 5
+  timeout_seconds: 120
