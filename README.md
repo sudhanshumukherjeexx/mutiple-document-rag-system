@@ -368,7 +368,7 @@ This is a self-contained system. To extend:
 
 ## License
 
-This code is provided as-is for educational and commercial use.
+This code is provided as-is for educational use under MIT License.
 
 ## Credits
 
@@ -386,7 +386,3 @@ For issues or questions:
 3. Examine metrics in `logs/metrics.json`
 4. Enable DEBUG logging for detailed information
 
----
-
-**Version**: 1.0.0  
-**Last Updated**: 2024
