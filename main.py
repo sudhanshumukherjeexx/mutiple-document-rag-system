@@ -124,6 +124,7 @@ class RAGApplication:
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(summary)
             print(f"💾 Summary saved to: {output_file}\n")
+            
             logger.info(f"Summary saved to {output_file}")
         
         return summary
