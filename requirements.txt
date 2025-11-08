@@ -16,7 +16,11 @@ sentence-transformers>=2.2.0
 # Configuration and utilities
 pyyaml>=6.0
 pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# Web Interface
+gradio>=4.0.0
 
 # Optional dependencies
-python-dotenv  # For .env file support
-gradio>=4.0.0  # For web UI
+# pytest>=7.0.0  # For testing
+# pytest-asyncio>=0.21.0  # For async tests

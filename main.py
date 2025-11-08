@@ -11,6 +11,16 @@ from pathlib import Path
 from typing import List, Optional
 import logging
 
+# Load .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()  # Load .env file from current directory
+    logger_temp = logging.getLogger(__name__)
+    logger_temp.debug(".env file loaded successfully")
+except ImportError:
+    # python-dotenv not installed, skip
+    pass
+
 from config_loader import load_config, config
 from logger import setup_logging
 from metrics import initialize_metrics, get_metrics_collector
@@ -20,15 +30,6 @@ from vector_store import VectorStoreManager
 from rag_pipeline import SelfCorrectedRAGPipeline
 
 logger = logging.getLogger(__name__)
-
-try:
-    from dotenv import load_dotenv
-    load_dotenv()  # Load .env file from current directory
-    logger_temp = logging.getLogger(__name__)
-    logger_temp.debug(".env file loaded successfully")
-except ImportError:
-    # python-dotenv not installed, skip
-    pass
 
 
 class RAGApplication:
@@ -73,6 +74,11 @@ class RAGApplication:
             logger.info("OpenAI API key loaded successfully")
         except ValueError as e:
             logger.error(f"Failed to load API key: {e}")
+            print("\n❌ ERROR: OpenAI API key not found!")
+            print("\nPlease set your API key using one of these methods:")
+            print("  1. Create a .env file with: OPENAI_API_KEY=sk-your-key-here")
+            print("  2. Export in terminal: export OPENAI_API_KEY='sk-your-key-here'")
+            print("  3. Add to ~/.bashrc or ~/.zshrc\n")
             sys.exit(1)
         
         # Initialize components
@@ -115,7 +121,7 @@ class RAGApplication:
         # Save if requested
         if output_file:
             Path(output_file).parent.mkdir(parents=True, exist_ok=True)
-            with open(output_file, 'w') as f:
+            with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(summary)
             print(f"💾 Summary saved to: {output_file}\n")
             logger.info(f"Summary saved to {output_file}")

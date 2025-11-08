@@ -45,14 +45,26 @@ pip install -r requirements.txt
 ```
 
 3. **Set up your OpenAI API key**
-```bash
-export OPENAI_API_KEY="your-api-key-here"
-```
 
-Or create a `.env` file:
-```
-OPENAI_API_KEY=your-api-key-here
-```
+   **Option 1: Using .env file (Recommended)**
+   ```bash
+   # Copy the template
+   cp .env.template .env
+   
+   # Edit .env and add your API key
+   # OPENAI_API_KEY=sk-your-actual-key-here
+   ```
+   
+   **Option 2: Export in terminal**
+   ```bash
+   export OPENAI_API_KEY="your-api-key-here"
+   ```
+   
+   **Option 3: Add to shell profile (Permanent)**
+   ```bash
+   echo 'export OPENAI_API_KEY="your-key-here"' >> ~/.bashrc
+   source ~/.bashrc
+   ```
 
 4. **Configure the system** (optional)
    
@@ -63,6 +75,30 @@ OPENAI_API_KEY=your-api-key-here
    - Logging and metrics options
 
 ## Quick Start
+
+### Option 1: Web Interface (Recommended) 🌐
+
+Launch the beautiful web interface:
+
+```bash
+./launch_web.sh
+# Or manually:
+python app.py
+```
+
+Then open your browser to `http://localhost:7860`
+
+**Features:**
+- 📝 Document summarization with drag-and-drop
+- 💬 Interactive Q&A chat interface
+- 📊 Real-time statistics dashboard
+- 🎨 Beautiful, intuitive UI
+
+See [WEB_INTERFACE_GUIDE.md](WEB_INTERFACE_GUIDE.md) for detailed instructions.
+
+### Option 2: Command Line Interface
+
+For command-line usage:
 
 ### 1. Summarize Documents
 
@@ -368,7 +404,7 @@ This is a self-contained system. To extend:
 
 ## License
 
-This code is provided as-is for educational use under MIT License.
+This code is provided as-is for educational and commercial use.
 
 ## Credits
 
@@ -386,3 +422,7 @@ For issues or questions:
 3. Examine metrics in `logs/metrics.json`
 4. Enable DEBUG logging for detailed information
 
+---
+
+**Version**: 1.0.0  
+**Last Updated**: 2024
