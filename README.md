@@ -2,6 +2,8 @@
 
 A production-ready Retrieval-Augmented Generation (RAG) system with document summarization capabilities and true self-correction mechanisms.
 
+use the app here: [live](https://huggingface.co/spaces/sudhanshumukherjeexx/rag-chatbot)
+
 ## Features
 
 ### Document Summarization
