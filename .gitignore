@@ -57,11 +57,15 @@ secrets.yaml
 output/
 results/
 summaries/
+web/               
 
 # Test files
 test_*.pdf
 sample_*.pdf
 dummy_*.txt
+test_*.txt
+summary_*.txt
+_app.py
 
 # Metrics
 metrics.json

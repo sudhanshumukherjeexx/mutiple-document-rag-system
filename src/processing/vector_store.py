@@ -16,8 +16,8 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.vectorstores import VectorStoreRetriever
 
-from config_loader import config
-from metrics import Timer
+from ..config_loader import config
+from ..metrics import Timer
 
 logger = logging.getLogger(__name__)
 

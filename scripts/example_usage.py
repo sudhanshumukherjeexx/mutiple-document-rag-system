@@ -5,13 +5,18 @@ Demonstrates various use cases and features.
 
 import asyncio
 import os
-from config_loader import load_config
-from logger import setup_logging
-from document_loader import DocumentLoader
-from summarizer import DocumentSummarizer
-from vector_store import VectorStoreManager
-from rag_pipeline import SelfCorrectedRAGPipeline
 
+
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from src.config_loader import load_config
+from src.logger import setup_logging
+from src.loaders.document_loader import DocumentLoader
+from src.processing.summarizer import DocumentSummarizer
+from src.processing.vector_store import VectorStoreManager
+from src.pipeline.rag_pipeline import SelfCorrectedRAGPipeline
+from src.metrics import get_metrics_collector
 
 async def example_1_document_summarization():
     """Example 1: Summarize multiple documents."""

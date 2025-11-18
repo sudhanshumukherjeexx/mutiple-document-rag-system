@@ -12,13 +12,14 @@ import logging
 from datetime import datetime
 
 # Import RAG system components
-from config_loader import load_config, config
-from logger import setup_logging
-from document_loader import DocumentLoader
-from summarizer import DocumentSummarizer
-from vector_store import VectorStoreManager
-from rag_pipeline import SelfCorrectedRAGPipeline
-from metrics import get_metrics_collector
+
+from src.config_loader import load_config, config
+from src.logger import setup_logging
+from src.loaders.document_loader import DocumentLoader
+from src.processing.summarizer import DocumentSummarizer
+from src.processing.vector_store import VectorStoreManager
+from src.pipeline.rag_pipeline import SelfCorrectedRAGPipeline
+from src.metrics import get_metrics_collector
 
 # Load environment and config
 try:
@@ -27,7 +28,7 @@ try:
 except ImportError:
     pass
 
-load_config("config.yaml")
+load_config("config/config.yaml")
 setup_logging(level="INFO")
 logger = logging.getLogger(__name__)
 
@@ -36,53 +37,191 @@ vector_store_manager = None
 rag_pipeline = None
 current_kb_name = None
 
-# Custom CSS for beautiful UI
+# Custom CSS for beautiful, minimalist, adaptive UI
 CUSTOM_CSS = """
+:root {
+  --bg: #0b0c0f;
+  --panel: #111318;
+  --subtle: #1a1d24;
+  --muted: #9aa3af;
+  --text: #e5e7eb;
+  --accent: #7c8cfb; /* indigo-ish */
+  --accent-2: #b889f6; /* violet-ish */
+  --success: #22c55e;
+  --error: #ef4444;
+  --warn: #f59e0b;
+  --radius: 14px;
+  --shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f8fb;
+    --panel: #ffffff;
+    --subtle: #f2f4f7;
+    --muted: #6b7280;
+    --text: #0f172a;
+    --accent: #6366f1;
+    --accent-2: #8b5cf6;
+    --shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+}
+
+* { box-sizing: border-box; }
+
 .gradio-container {
-    font-family: 'Inter', sans-serif;
+  max-width: 1100px;
+  margin: 0 auto !important;
+  padding: 24px !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji" !important;
+  background: var(--bg);
+  color: var(--text);
 }
 
+/* Header */
 .main-header {
-    text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2rem;
-    border-radius: 10px;
-    margin-bottom: 2rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 28%, transparent), transparent 55%);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  color: var(--text);
+  padding: 28px 22px;
+  border-radius: var(--radius);
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+}
+.main-header h1 {
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+.main-header p {
+  margin: 4px 0;
+  color: var(--muted);
 }
 
-.feature-box {
-    background: #f8f9fa;
-    border-left: 4px solid #667eea;
-    padding: 1rem;
-    margin: 1rem 0;
-    border-radius: 5px;
-}
-
-.success-message {
-    color: #28a745;
-    font-weight: bold;
-}
-
-.error-message {
-    color: #dc3545;
-    font-weight: bold;
-}
-
-.info-box {
-    background: #e7f3ff;
-    border: 1px solid #b3d9ff;
-    padding: 1rem;
-    border-radius: 5px;
-    margin: 1rem 0;
-}
-
+/* Panels / boxes */
+.feature-box,
+.info-box,
 .stats-box {
-    background: #fff3cd;
-    border: 1px solid #ffc107;
-    padding: 1rem;
-    border-radius: 5px;
-    margin: 1rem 0;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+  box-shadow: none;
+}
+
+.feature-box { background: var(--panel); }
+.info-box    { background: color-mix(in srgb, var(--accent) 7%, var(--panel)); }
+.stats-box   { background: color-mix(in srgb, var(--warn) 7%, var(--panel)); }
+
+.success-message { color: var(--success); font-weight: 600; }
+.error-message   { color: var(--error); font-weight: 600; }
+
+/* Tabs & sections */
+.gr-tabs, .tabitem, .gr-block, .gr-box, .gr-group {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.gr-panel, .gr-box > div, .gr-accordion, .gr-accordion .label-wrap {
+  background: var(--panel) !important;
+  border-radius: var(--radius) !important;
+  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent) !important;
+}
+
+.gr-accordion .label-wrap {
+  padding: 12px 14px !important;
+}
+
+/* Buttons */
+.gr-button, button.svelte-1ipelgc {
+  border-radius: 12px !important;
+  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent) !important;
+  background: linear-gradient(180deg, var(--panel), color-mix(in srgb, var(--panel) 70%, black));
+  color: var(--text);
+  transition: transform .08s ease, box-shadow .12s ease, border-color .2s ease;
+}
+.gr-button:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+.gr-button.primary, .gr-button--primary {
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color: #fff !important;
+  border: none !important;
+}
+.gr-button.secondary, .gr-button--secondary {
+  background: var(--subtle);
+}
+
+/* Inputs */
+textarea, input[type="text"], .gr-textbox, .gr-file, .gr-dropdown, .gr-select {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent) !important;
+  transition: border-color .2s ease, box-shadow .15s ease;
+}
+textarea:focus, input[type="text"]:focus, .gr-textbox:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent) !important;
+  outline: none !important;
+}
+.gr-textbox textarea {
+  line-height: 1.55;
+}
+
+/* Markdown bodies */
+.gr-markdown, .gr-markdown p, .gr-markdown li, .gr-markdown code {
+  color: var(--text) !important;
+}
+.gr-markdown code {
+  background: var(--subtle);
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
+/* Chatbot */
+.gr-chatbot {
+  background: var(--panel) !important;
+  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow);
+}
+.gr-chatbot .message {
+  border-radius: 12px !important;
+}
+.gr-chatbot .message.user {
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel)) !important;
+}
+.gr-chatbot .message.bot {
+  background: color-mix(in srgb, var(--accent-2) 10%, var(--panel)) !important;
+}
+
+/* Status & statistics blocks */
+#status_display, .status, .stats {
+  background: var(--panel) !important;
+  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent) !important;
+  border-radius: var(--radius) !important;
+  padding: 12px !important;
+}
+
+/* File uploader */
+.gr-file {
+  background: var(--panel) !important;
+}
+
+/* Subtle separators */
+hr {
+  border: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+
+/* Responsive tweaks */
+@media (max-width: 860px) {
+  .gradio-container { padding: 16px !important; }
+  .main-header { padding: 20px; }
 }
 """
 
@@ -325,16 +464,25 @@ def get_system_stats() -> str:
 def create_interface():
     """Create the Gradio web interface"""
     
-    with gr.Blocks(css=CUSTOM_CSS, theme=gr.themes.Soft(), title="RAG System") as app:
+    with gr.Blocks(
+        css=CUSTOM_CSS,
+        theme=gr.themes.Soft(
+            primary_hue="indigo",
+            secondary_hue="violet",
+            neutral_hue="slate",
+            font=gr.themes.GoogleFont("Inter")
+        ),
+        title="RAG System"
+    ) as app:
         
         # Header
         gr.HTML("""
         <div class="main-header">
             <h1>🤖 Intelligent Document Analysis System</h1>
-            <p style="font-size: 1.2rem; margin-top: 1rem;">
+            <p style="font-size: 1.06rem; margin-top: .25rem;">
                 AI-Powered Document Summarization & Question Answering
             </p>
-            <p style="font-size: 0.9rem; opacity: 0.9;">
+            <p style="font-size: .92rem;">
                 Powered by GPT-4 | Self-Correcting RAG | Production-Ready
             </p>
         </div>
@@ -484,7 +632,6 @@ def create_interface():
                     with gr.Column(scale=3):
                         gr.Markdown("")  # Empty space
                 
-            
                 
                 # Examples
                 gr.Examples(

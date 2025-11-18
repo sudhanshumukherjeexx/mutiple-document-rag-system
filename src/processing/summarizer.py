@@ -12,8 +12,8 @@ from langchain_classic.chains import load_summarize_chain
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 
-from config_loader import config
-from metrics import Timer
+from ..config_loader import config
+from ..metrics import Timer
 
 logger = logging.getLogger(__name__)
 

@@ -21,13 +21,17 @@ except ImportError:
     # python-dotenv not installed, skip
     pass
 
-from config_loader import load_config, config
-from logger import setup_logging
-from metrics import initialize_metrics, get_metrics_collector
-from document_loader import DocumentLoader
-from summarizer import DocumentSummarizer
-from vector_store import VectorStoreManager
-from rag_pipeline import SelfCorrectedRAGPipeline
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from src.config_loader import load_config, config
+from src.logger import setup_logging
+from src.metrics import initialize_metrics, get_metrics_collector
+from src.loaders.document_loader import DocumentLoader
+from src.processing.summarizer import DocumentSummarizer
+from src.processing.vector_store import VectorStoreManager
+from src.pipeline.rag_pipeline import SelfCorrectedRAGPipeline
+
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +39,7 @@ logger = logging.getLogger(__name__)
 class RAGApplication:
     """Main application class for RAG system."""
     
-    def __init__(self, config_path: str = "config.yaml"):
+    def __init__(self, config_path: str = "./config/config.yaml"):
         """
         Initialize the application.
         

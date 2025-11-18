@@ -13,8 +13,8 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
-from config_loader import config
-from metrics import Timer
+from ..config_loader import config
+from ..metrics import Timer
 
 logger = logging.getLogger(__name__)
 

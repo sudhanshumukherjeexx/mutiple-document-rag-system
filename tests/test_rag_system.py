@@ -10,11 +10,15 @@ from unittest.mock import Mock, patch, MagicMock
 from langchain_core.documents import Document
 
 # Import modules to test
-from config_loader import Config
-from validators import InputValidator, ValidationError
-from document_loader import DocumentLoader, DocumentLoaderError
-from metrics import MetricsCollector, QueryMetrics
-from agents import GuardrailCheck, Evaluation
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from src.config_loader import Config
+from src.validators import InputValidator, ValidationError
+from src.loaders.document_loader import DocumentLoader, DocumentLoaderError
+from src.metrics import MetricsCollector, QueryMetrics
+from src.agents.agents import GuardrailCheck, Evaluation
+
 
 
 class TestConfig:

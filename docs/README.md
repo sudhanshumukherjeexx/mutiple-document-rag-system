@@ -32,7 +32,7 @@ A production-ready Retrieval-Augmented Generation (RAG) system with document sum
 ## Installation
 
 ### Prerequisites
-- Python 3.11 or higher
+- Python 3.8 or higher
 - OpenAI API key
 
 ### Setup
@@ -103,25 +103,25 @@ For command-line usage:
 ### 1. Summarize Documents
 
 ```bash
-python scripts/main.py summarize document1.pdf document2.pdf --output summary.txt
+python main.py summarize document1.pdf document2.pdf --output summary.txt
 ```
 
 ### 2. Create Knowledge Base
 
 ```bash
-python scripts/main.py create-kb document1.pdf document2.pdf document3.pdf --save ./knowledge_base
+python main.py create-kb document1.pdf document2.pdf document3.pdf --save ./knowledge_base
 ```
 
 ### 3. Query the Knowledge Base
 
 ```bash
-python scripts/main.py query "What are the main findings?" --kb ./knowledge_base
+python main.py query "What are the main findings?" --kb ./knowledge_base
 ```
 
 ### 4. Interactive Mode
 
 ```bash
-python scripts/main.py interactive --kb ./knowledge_base
+python main.py interactive --kb ./knowledge_base
 ```
 
 In interactive mode:
@@ -133,7 +133,7 @@ In interactive mode:
 ### 5. View Metrics
 
 ```bash
-python scripts/main.py metrics
+python main.py metrics
 ```
 
 ## Usage Examples
@@ -141,7 +141,7 @@ python scripts/main.py metrics
 ### Example 1: Research Paper Summarization
 ```bash
 # Summarize multiple research papers
-python scripts/main.py summarize \
+python main.py summarize \
     paper1.pdf paper2.pdf paper3.pdf \
     --output research_summary.txt \
     --verbose
@@ -150,14 +150,14 @@ python scripts/main.py summarize \
 ### Example 2: Company Knowledge Base
 ```bash
 # Create knowledge base from company documents
-python scripts/main.py create-kb \
+python main.py create-kb \
     policies/*.pdf \
     handbooks/*.pdf \
     reports/*.pdf \
     --save ./company_kb
 
 # Query the knowledge base
-python scripts/main.py query \
+python main.py query \
     "What is our vacation policy?" \
     --kb ./company_kb \
     --context
@@ -166,14 +166,14 @@ python scripts/main.py query \
 ### Example 3: Technical Documentation
 ```bash
 # Create KB from documentation
-python scripts/main.py create-kb \
+python main.py create-kb \
     docs/api.md \
     docs/tutorial.md \
     docs/reference.pdf \
     --save ./tech_docs_kb
 
 # Interactive technical support
-python scripts/main.py interactive --kb ./tech_docs_kb
+python main.py interactive --kb ./tech_docs_kb
 ```
 
 ## Architecture
@@ -182,21 +182,19 @@ python scripts/main.py interactive --kb ./tech_docs_kb
 
 ```
 rag_system/
-├── src/                    # All source code
-│   ├── loaders/           # Document loading
-│   ├── processing/        # Summarizer, vector store
-│   ├── agents/            # RAG agents
-│   ├── pipeline/          # RAG pipeline
-├── scripts/               # Executable scripts
-|   ├── main.py             # CLI entry point
-├── tests/                 # Unit tests
-├── config/                # Config files
-├── docs/                  # Documentation
-└── app.py                 # Gradio app
-└── [root files]           # requirements.txt, .gitignore, etc.
+├── config.yaml              # Configuration file
+├── config_loader.py         # Configuration management
+├── logger.py                # Logging setup
+├── metrics.py               # Metrics collection
+├── validators.py            # Input validation
+├── document_loader.py       # Document loading
+├── summarizer.py            # Document summarization
+├── vector_store.py          # Vector store management
+├── agents.py                # RAG agents (Guardrail, Generation, Evaluation)
+├── rag_pipeline.py          # Self-corrected RAG pipeline
+├── main.py                  # CLI entry point
+└── requirements.txt         # Dependencies
 ```
-
-
 
 ### Pipeline Flow
 
@@ -264,21 +262,21 @@ logging:
 ### Custom Configuration
 
 ```bash
-python scripts/main.py --config custom_config.yaml summarize document.pdf
+python main.py --config custom_config.yaml summarize document.pdf
 ```
 
 ### Programmatic Usage
 
 ```python
-from src.config_loader import load_config
-from src.loaders.document_loader import DocumentLoader
-from src.processing.summarizer import DocumentSummarizer
-from src.processing.vector_store import VectorStoreManager
-from src.pipeline.rag_pipeline import SelfCorrectedRAGPipeline
+from config_loader import load_config
+from document_loader import DocumentLoader
+from summarizer import DocumentSummarizer
+from vector_store import VectorStoreManager
+from rag_pipeline import SelfCorrectedRAGPipeline
 import asyncio
 
 # Load configuration
-load_config("config/config.yaml")
+load_config("config.yaml")
 
 # Load and summarize documents
 loader = DocumentLoader()
@@ -300,7 +298,7 @@ print(result.answer)
 ### Custom Agents
 
 ```python
-from src.agents.agents import GuardrailAgent, GenerationAgent, EvaluationAgent
+from agents import GuardrailAgent, GenerationAgent, EvaluationAgent
 
 # Use agents individually
 guardrail = GuardrailAgent()
@@ -360,7 +358,7 @@ logging:
 Or set temporarily:
 ```bash
 export LOG_LEVEL=DEBUG
-python scripts/main.py query "question" --kb ./kb
+python main.py query "question" --kb ./kb
 ```
 
 ## Performance Optimization
@@ -406,14 +404,25 @@ This is a self-contained system. To extend:
 
 ## License
 
-This code is provided as-is for educational under MIT License.
+This code is provided as-is for educational and commercial use.
 
 ## Credits
 
-Built with <3 by Sudhanshu and:
+Built with:
 - LangChain for LLM orchestration
 - OpenAI for language models
 - FAISS for vector search
 - Sentence Transformers for embeddings
 
+## Support
 
+For issues or questions:
+1. Check the troubleshooting section
+2. Review logs in `logs/rag_system.log`
+3. Examine metrics in `logs/metrics.json`
+4. Enable DEBUG logging for detailed information
+
+---
+
+**Version**: 1.0.0  
+**Last Updated**: 2024

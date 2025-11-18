@@ -11,7 +11,7 @@ import logging
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_core.documents import Document
 
-from validators import InputValidator
+from ..validators import InputValidator
 
 logger = logging.getLogger(__name__)
 

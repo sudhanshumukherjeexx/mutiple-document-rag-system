@@ -12,10 +12,10 @@ import logging
 from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStoreRetriever
 
-from config_loader import config
-from metrics import Timer, QueryMetrics, get_metrics_collector
-from validators import validate_query
-from agents import GuardrailAgent, GenerationAgent, EvaluationAgent
+from ..config_loader import config
+from ..metrics import Timer, QueryMetrics, get_metrics_collector
+from ..validators import validate_query
+from ..agents.agents import GuardrailAgent, GenerationAgent, EvaluationAgent
 
 logger = logging.getLogger(__name__)
 

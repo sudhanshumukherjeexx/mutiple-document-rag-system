@@ -24,7 +24,7 @@ class Config:
             cls._instance = super(Config, cls).__new__(cls)
         return cls._instance
     
-    def load(self, config_path: str = "config.yaml") -> None:
+    def load(self, config_path: str = None) -> None:
         """
         Load configuration from YAML file.
         
@@ -35,9 +35,23 @@ class Config:
             FileNotFoundError: If config file doesn't exist
             yaml.YAMLError: If config file is invalid
         """
-        if not os.path.exists(config_path):
+        if config_path is None:
+            # Always resolve relative to project root
+            print("Step 1")
+            #project_root = Path(__file__).resolve().parent.parent
+            config_path = "./config/config.yaml"
+        else:
+            print("Step 2")
+            config_path = "./config/config.yaml"
+            config_path = Path(config_path)
+            print(config_path)
+            if not config_path.is_absolute():
+                # If relative, resolve from project root
+                project_root = Path(__file__).resolve().parent.parent
+                config_path = project_root / config_path
+        config_path = config_path.resolve()
+        if not config_path.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_path}")
-        
         try:
             with open(config_path, 'r') as f:
                 self._config = yaml.safe_load(f)
@@ -144,7 +158,7 @@ class Config:
 config = Config()
 
 
-def load_config(config_path: str = "config.yaml") -> Config:
+def load_config(config_path: str = "./config/config.yaml") -> Config:
     """
     Load configuration from file.
     
